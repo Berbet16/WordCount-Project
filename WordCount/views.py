@@ -3,31 +3,32 @@ from django.shortcuts import render
 import operator
 import string
 
-def homepage(request):
+def home(request):
     return render(request, 'home.html')
 
-def about(request):
-    return render(request, 'about.html')
+def count2(request):
+    return render(request, 'count2.html')
 
 def count(request):
-    fulltext = request.GET['fulltext'].lower()
+    fullText = request.GET['fullText']
+    lowerFullText = fullText.lower()
+    newFullText = ""
 
-    newFulltext = ""
-
-    for i in fulltext:
+    for i in lowerFullText:
         if i not in string.punctuation:
-            newFulltext += i
+            newFullText += i
 
-    wordlist = newFulltext.split()
+    wordlist = newFullText.split()
+    sentenceslist = fullText.split(".")
 
-    worddictionary = {}
+    wordDictionary = {}
 
     for word in wordlist:
-        if word in worddictionary:
-            worddictionary[word] += 1
+        if word in wordDictionary:
+            #Increase
+            wordDictionary[word] += 1
         else:
-            worddictionary[word] = 1
-
-    sortedwords = sorted(worddictionary.items(), key=operator.itemgetter(1), reverse=True)
-
-    return render(request, 'count.html', {'fulltext': fulltext, 'count':len(wordlist), 'sortedwords':sortedwords})
+            #Add to the dicitonary
+            wordDictionary[word] = 1
+    sort_wordDictionary = sorted(wordDictionary.items(), key=lambda x: (x[1], x[0]), reverse=True)
+    return render(request, 'count.html', {'fullText':fullText, 'count':len(wordlist), 'wordDictionary': sort_wordDictionary, 'sentencesCount':len(sentenceslist)-1})
